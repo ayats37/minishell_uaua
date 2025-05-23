@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 12:07:43 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/11 12:01:58 by taya             ###   ########.fr       */
+/*   Updated: 2025/05/23 00:23:58 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ t_token * handle_word(t_lexer *lexer)
             in_quotes = 0;
         }
         else if (!in_quotes && ft_strchr("|<>()&", lexer->input[lexer->position])){
-			write(1, "1\n", 2);
+			// write(1, "1\n", 2);
 			break;
 		}
         else
@@ -333,7 +333,7 @@ void append_token(t_token **head, t_token *token)
 void merge_tokens(t_token **tokens)
 {
     t_token *current = *tokens;
-    t_token *tmp = NULL;
+    // t_token *tmp = NULL;
 
     while (current != NULL && current->next != NULL)
     {
@@ -355,7 +355,7 @@ void merge_tokens(t_token **tokens)
         }
         else
         {
-            tmp = current;
+            // tmp = current;
             current = current->next;
         }
     }
@@ -497,12 +497,12 @@ t_tree *parse_cmd(t_token *token)
 
 t_tree	*parse_paren(t_token *token)
 {
-	write(1, "3\n", 2);
+	// write(1, "3\n", 2);
 	t_token *current;
 	t_token *tmp = token;
 	size_t	paren = 0;
 	if (tmp->type != 9){
-		write(1, "4\n", 2);
+		// write(1, "4\n", 2);
 		return(parse_cmd(token));
 	}
 	// print_linked_list(tmp);
@@ -555,7 +555,7 @@ t_tree	*parse_pipes(t_token *token)
 
 t_tree	*parse_op(t_token *token)
 {
-	write(1, "2\n", 2);
+	// write(1, "2\n", 2);
 	t_token *opr = get_last_opr(token);
 	t_token *left_token = NULL;
 	t_token *right_token = NULL;

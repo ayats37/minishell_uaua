@@ -18,6 +18,7 @@ void write_error(char *message)
     perror(message);
     exit(1);
 }
+
 int execute_cmds(char **cmds, char **env, t_tree *node)
 {
     pid_t pid;
@@ -45,6 +46,7 @@ int execute_cmds(char **cmds, char **env, t_tree *node)
     }
     return (0);
 }
+
 int execute_pipe(t_tree *node, char **env, t_env *envlist)
 {
     pid_t pid1;
@@ -93,14 +95,30 @@ int handle_redirection(t_tree *node)
 {
     int fd;
     t_token *current_redir;
+    int last_heredoc_fd = -1;
 
     if (!node || !node->redir)
         return (0);
-    
     current_redir = node->redir;
     while (current_redir)
     {
-        if (!current_redir->value)
+        if (current_redir->type == HEREDOC)
+        {
+            if (last_heredoc_fd != -1)
+                close(last_heredoc_fd);
+            last_heredoc_fd = handle_heredoc_redirection(current_redir);
+        }
+        current_redir = current_redir->next;
+    }
+    if (last_heredoc_fd != -1)
+    {
+        dup2(last_heredoc_fd, STDIN_FILENO);
+        close(last_heredoc_fd);
+    }
+    current_redir = node->redir;
+    while (current_redir)
+    {
+        if (!current_redir->value && current_redir->type != HEREDOC)
         {
             write(2, "Invalid filename\n", 18);
             return (1);
@@ -142,24 +160,80 @@ int handle_redirection(t_tree *node)
     }
     return (0);
 }
+
+int handle_heredoc_redirection(t_token *heredoc_token)
+{
+    char *line;
+    int pipe_fd[2];
+    char *delimiter;
+
+    if (pipe(pipe_fd) == -1)
+        write_error("pipe failed");
+    delimiter = heredoc_token->value;
+    while (1)
+    {
+        line = readline("> ");
+        if (!line || strcmp(line, delimiter) == 0)
+        {
+            free(line);
+            break;
+        }
+        write(pipe_fd[1], line, strlen(line));
+        write(pipe_fd[1], "\n", 1);
+        free(line);
+    }
+    close(pipe_fd[1]);
+    return (pipe_fd[0])
+	}
+
+void heredoc(t_tree *node)
+{
+    t_token *redir = node->redir;
+    char *line;
+    char *delimiter;
+    
+    while (redir)
+    {
+        if (redir->type == HEREDOC)
+        {
+            delimiter = redir->value;
+            while (1)
+            {
+                line = readline("> ");
+                if (!line || strcmp(line, delimiter) == 0)
+                {
+                    free(line);
+                    break;
+                }
+                free(line);
+            }
+        }
+        redir = redir->next;
+    }
+}
+
 int execute_tree(t_tree *node, char **env, t_env **envlist)
 {
-    int status;
+    int status = 0;
 
-    status = 0;
-    if (node && node->redir && !node->cmd)
+    if (!node)
+        return (1);
+    if (node->redir && (!node->cmd || !node->cmd[0]))
     {
-        handle_heredoc(node);
-        return 0;
-    }
+        heredoc(node);
+        return (0);
+		}
     if (node->type == PIPE)
         return (execute_pipe(node, env, *envlist));
     else if (node->type == CMD || node->type == DOUBLE_QUOTE)
     {
-		if (is_builtin(node->cmd[0]))
-			return (execute_builtin(node, envlist));
+        if (!node->cmd || !node->cmd[0])
+            return (1);
+            
+        if (is_builtin(node->cmd[0]))
+            return (execute_builtin(node, envlist));
         else
-          return (execute_cmds(node->cmd, env, node));
+            return (execute_cmds(node->cmd, env, node));
     }
     else if (node->type == AND || node->type == OR)
     {
@@ -170,42 +244,5 @@ int execute_tree(t_tree *node, char **env, t_env **envlist)
             return (execute_tree(node->right, env, envlist));
         return (status);
     }
-     return (1);
+    return (1);
 }
-void handle_heredoc(t_tree *node)
-{
-    t_token *redir = node->redir;
-    char *line;
-    int pipe_fd[2];
-    char *delimiter;
-
-    while (redir)
-    {
-        if (redir->type == HEREDOC)
-        {
-            if (pipe(pipe_fd) == -1)
-                write_error("pipe failed");
-            
-            delimiter = redir->value;
-            while (1)
-            {
-                line = readline("> ");
-                if (!line || strcmp(line, delimiter) == 0)
-                {
-                    free(line);
-                    break;
-                }
-                write(pipe_fd[1], line, strlen(line));
-                write(pipe_fd[1], "\n", 1);
-                free(line);
-            }
-            close(pipe_fd[1]);
-            
-            dup2(pipe_fd[0], STDIN_FILENO);
-            close(pipe_fd[0]);
-            break;
-        }
-        redir = redir->next;
-    }
-}
-

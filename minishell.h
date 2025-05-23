@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/22 21:58:20 by taya             ###   ########.fr       */
+/*   Updated: 2025/05/23 01:57:26 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ int execute_builtin(t_tree *node, t_env **envlist);
 int handle_variable(char *str, t_env *env_list);
 int  is_alphanumeric(int c);
 char	*find_cmd_path(char *cmd, char **env);
-char	**split_cmd(char *cmd);
 char	**ft_split(char const *s, char c);
 int execute_tree(t_tree *node, char **env, t_env **envlist);
 int execute_cmds(char **cmds, char **env, t_tree *node);
@@ -128,6 +127,8 @@ int handle_redirection(t_tree *node);
 int  is_alpha(int c);
 void env_append(char *name, char *value, t_env **env_list);
 t_env *find_env_var(char *name, t_env *env_list);
-void    handle_heredoc(t_tree *node);
+void heredoc(t_tree *node);
+int handle_heredoc_redirection(t_token *heredoc_token);
+
 
 #endif
