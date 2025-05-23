@@ -50,6 +50,7 @@ int main(int argc, char **argv, char **env)
     t_token *token_list = NULL;
     t_tree  *node = NULL;
     t_env   *envlist = init_env(env);
+	
 
     (void)argc;
     (void)argv;
@@ -71,7 +72,7 @@ int main(int argc, char **argv, char **env)
             continue;
         }
         add_history(input);
-        
+       
         lexer = initialize_lexer(input);
         token_list = NULL;
         while (lexer->position < lexer->lenght)

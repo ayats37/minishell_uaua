@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/23 11:21:03 by taya             ###   ########.fr       */
+/*   Updated: 2025/05/23 11:34:38 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ void env_append(char *name, char *value, t_env **env_list);
 t_env *find_env_var(char *name, t_env *env_list);
 void heredoc(t_tree *node);
 int handle_heredoc_redirection(t_token *heredoc_token);
+
 
 
 #endif
