@@ -183,8 +183,8 @@ int handle_heredoc_redirection(t_token *heredoc_token)
         free(line);
     }
     close(pipe_fd[1]);
-    return (pipe_fd[0])
-	}
+    return (pipe_fd[0]);
+}
 
 void heredoc(t_tree *node)
 {
@@ -215,6 +215,7 @@ void heredoc(t_tree *node)
 int execute_tree(t_tree *node, char **env, t_env **envlist)
 {
     int status = 0;
+		int last_status = 0;
 
     if (!node)
         return (1);
@@ -231,7 +232,7 @@ int execute_tree(t_tree *node, char **env, t_env **envlist)
             return (1);
             
         if (is_builtin(node->cmd[0]))
-            return (execute_builtin(node, envlist));
+            return (execute_builtin(node, envlist, last_status));
         else
             return (execute_cmds(node->cmd, env, node));
     }

@@ -14,12 +14,17 @@ int  is_alpha(int c)
             (c >= 'a' && c <= 'z'));
 }
 
-int handle_variable(char *str, t_env *env_list)
+int handle_variable(char *str, t_env *env_list, int last_exit_status)
 {
     int var_len;
     char *var;
     char *value;
 
+    if (str[1] == '?')
+    {
+        printf("%d", last_exit_status);
+        return (1); 
+    }
     var_len = 0;
     while (str[var_len + 1] && (is_alphanumeric(str[var_len + 1]) || str[var_len + 1] == '_'))
         var_len++;
@@ -39,7 +44,7 @@ int handle_variable(char *str, t_env *env_list)
     }
 }
 
-int execute_builtin(t_tree *node, t_env **envlist)
+int execute_builtin(t_tree *node, t_env **envlist, int last_status)
 {
     int stdout_backup;
     int result;
@@ -49,7 +54,7 @@ int execute_builtin(t_tree *node, t_env **envlist)
         handle_redirection(node);    
     result = 0;
     if (strcmp(node->cmd[0], "echo") == 0)
-        result = ft_echo(node->cmd, *envlist);
+        result = ft_echo(node->cmd, *envlist, last_status);
     else if (strcmp(node->cmd[0], "cd") == 0)
         result = ft_cd(node->cmd, *envlist);
     else if (strcmp(node->cmd[0], "pwd") == 0)

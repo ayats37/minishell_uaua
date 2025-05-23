@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/23 01:57:26 by taya             ###   ########.fr       */
+/*   Updated: 2025/05/23 11:21:03 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,16 +105,15 @@ t_env *init_env(char **env);
 t_env *create_env_node(char *env_var);
 void add_to_env_list(t_env **head, t_env *new_node);
 t_env *init_env(char **envp);
-int handle_variable(char *str, t_env *env_list);
-int ft_echo(char **cmd, t_env *env_list);
+int ft_echo(char **cmd, t_env *env_list, int last_status);
 int ft_pwd();
 int ft_cd(char **cmd, t_env *envlist);
 int ft_unset(char **cmd, t_env **env_list);
 int ft_exit(char **cmd, t_env *env_list);
 int ft_env(t_env **env_list);
 int ft_export(char **cmd, t_env **env_list);
-int execute_builtin(t_tree *node, t_env **envlist);
-int handle_variable(char *str, t_env *env_list);
+int execute_builtin(t_tree *node, t_env **envlis, int last_status);
+int handle_variable(char *str, t_env *env_list, int last_exit_status);
 int  is_alphanumeric(int c);
 char	*find_cmd_path(char *cmd, char **env);
 char	**ft_split(char const *s, char c);

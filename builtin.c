@@ -6,13 +6,13 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 12:09:19 by taya              #+#    #+#             */
-/*   Updated: 2025/05/07 16:43:08 by taya             ###   ########.fr       */
+/*   Updated: 2025/05/23 11:15:55 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int ft_echo(char **cmd, t_env *env_list)
+int ft_echo(char **cmd, t_env *env_list, int last_status)
 {
     int i = 1;
     int newline = 1;
@@ -31,7 +31,7 @@ int ft_echo(char **cmd, t_env *env_list)
         {
             if (cmd[i][j] == '$')
             {
-                offset = handle_variable(&cmd[i][j], env_list);
+                offset = handle_variable(&cmd[i][j], env_list, last_status);
                 j += offset + 1; 
             }
             else
