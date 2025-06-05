@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/04 03:09:22 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/05 10:32:32 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ void env_append(char *name, char *value, t_env **env_list);
 t_env *find_env_var(char *name, t_env *env_list);
 void	process_all_heredocs(t_tree *node);
 int execute_pipe(t_tree *node, char **env, t_env **envlist);
-t_token *create_token_fd(char *value, t_type type);
 void handle_heredoc_input(char *delimiter, int write_fd);
 void process_heredocs_tree(t_tree *node);
 

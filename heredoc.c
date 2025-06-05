@@ -1,20 +1,5 @@
 #include "minishell.h"
 
-t_token *create_token_fd(char *value, t_type type)
-{
-    t_token *token = malloc(sizeof(t_token));
-    if (!token)
-        return NULL;
-    
-    token->value = ft_strdup(value);
-    token->type = type;
-    token->has_space = 0;
-    token->fd = -1;
-    token->next = NULL;
-    
-    return token;
-}
-
 void handle_heredoc_input(char *delimiter, int write_fd)
 {
     char *line;
@@ -55,14 +40,14 @@ void process_heredocs_tree(t_tree *node)
         {
             if (pipe(pipe_fd) == -1)
             {
-                perror("pipe");
+                perror("pipe failed");
                 redir = redir->next;
                 continue;
             }
             pid = fork();
             if (pid == -1)
             {
-                perror("fork");
+                perror("fork failed");
                 close(pipe_fd[0]);
                 close(pipe_fd[1]);
                 redir = redir->next;

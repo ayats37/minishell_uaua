@@ -76,19 +76,17 @@ int main(int argc, char **argv, char **env)
         add_history(input);
         lexer = initialize_lexer(input);
         token_list = NULL;
-        
-				while (lexer->position < lexer->lenght)
-				{
-					token = get_next_token(lexer);
-					if (!token)
-						continue;
-					token->type = token_type(token);
-					append_token(&token_list, token);
-				}
-       
+		while (lexer->position < lexer->lenght)
+		{
+			token = get_next_token(lexer);
+			if (!token)
+			    continue;
+			token->type = token_type(token);
+			append_token(&token_list, token);
+		}
         merge_tokens(&token_list);
         node = parse_op(token_list);
-				 print_tree(node, 0, "NODE");
+		// print_tree(node, 0, "NODE");
         process_heredocs_tree(node); 
         execute_tree(node, env, &envlist);  
         free(input);
