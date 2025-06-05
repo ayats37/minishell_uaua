@@ -44,16 +44,16 @@ void	handler(int sig)
 
 int main(int argc, char **argv, char **env)
 {
-    char    *input;
+    char *input;
     t_lexer *lexer;
     t_token *token;
-    t_token *token_list = NULL;
-    t_tree  *node = NULL;
-    t_env   *envlist = init_env(env);
-	
+    t_token *token_list;
+    t_tree *node;
+    t_env *envlist;
+		(void)argc;
+		(void)argv;
 
-    (void)argc;
-    (void)argv;
+    envlist = init_env(env);
     signal(SIGQUIT, SIG_IGN);
     signal(SIGINT, handler);
     rl_catch_signals = 0;
@@ -66,27 +66,33 @@ int main(int argc, char **argv, char **env)
             write(1, "exit\n", 5);
             exit(0);
         }
+        
         if (input[0] == '\0')
         {
             free(input);
             continue;
         }
+        
         add_history(input);
-       
         lexer = initialize_lexer(input);
         token_list = NULL;
-        while (lexer->position < lexer->lenght)
-        {
-            token = get_next_token(lexer);
-            if (!token)
-                continue;
-            token->type = token_type(token);
-            append_token(&token_list, token);
-        }
+        
+				while (lexer->position < lexer->lenght)
+				{
+					token = get_next_token(lexer);
+					if (!token)
+						continue;
+					token->type = token_type(token);
+					append_token(&token_list, token);
+				}
+       
         merge_tokens(&token_list);
         node = parse_op(token_list);
-        // print_tree(node, 0, "NODE");
-        execute_tree(node, env, &envlist);
+				 print_tree(node, 0, "NODE");
+        process_heredocs_tree(node); 
+        execute_tree(node, env, &envlist);  
+        free(input);
     }
-    return (0);
+    
+    return 0;
 }

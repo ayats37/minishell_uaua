@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-
-
 int  is_alphanumeric(int c)
 {
     return ((c >= 'A' && c <= 'Z') || 

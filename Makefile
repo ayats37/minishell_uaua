@@ -76,7 +76,7 @@
 
 
 
-SRCS =  test.c exec.c builtin.c   tree.c check_path.c main.c env_list.c
+SRCS =  test.c exec.c builtin.c  heredoc.c tree.c  check_path.c main.c env_list.c
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 NAME = minishell

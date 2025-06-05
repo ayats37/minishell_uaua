@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/23 11:34:38 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/04 03:09:22 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct s_token {
 	char	*value;
 	t_type		type;
 	int			has_space;
+	int fd;
 	struct s_token *next;
 }	t_token;
 
@@ -120,15 +121,16 @@ char	**ft_split(char const *s, char c);
 int execute_tree(t_tree *node, char **env, t_env **envlist);
 int execute_cmds(char **cmds, char **env, t_tree *node);
 void write_error(char *message);
-int execute_pipe(t_tree *node, char **env, t_env *envlist);
+// int execute_pipe(t_tree *node, char **env, t_env *envlist);
 int is_builtin(char *cmd);
 int handle_redirection(t_tree *node);
 int  is_alpha(int c);
 void env_append(char *name, char *value, t_env **env_list);
 t_env *find_env_var(char *name, t_env *env_list);
-void heredoc(t_tree *node);
-int handle_heredoc_redirection(t_token *heredoc_token);
-
-
+void	process_all_heredocs(t_tree *node);
+int execute_pipe(t_tree *node, char **env, t_env **envlist);
+t_token *create_token_fd(char *value, t_type type);
+void handle_heredoc_input(char *delimiter, int write_fd);
+void process_heredocs_tree(t_tree *node);
 
 #endif
