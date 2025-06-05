@@ -48,7 +48,8 @@ int execute_builtin(t_tree *node, t_env **envlist, int last_status)
     int result;
     
     stdout_backup = dup(STDOUT_FILENO);// kandir copy l terminal hit fach testet kayb9a ga3 dakchi ytktb f outfile donc kayb9a forever
-    if (node->redir)
+    write(2 , "-------****-------\n",20);
+    if (!node && !node->redir)
         handle_redirection(node);    
     result = 0;
     if (strcmp(node->cmd[0], "echo") == 0)

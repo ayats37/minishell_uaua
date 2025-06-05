@@ -37,9 +37,9 @@
 
 
 
-SRCS =  test.c exec.c builtin.c  heredoc.c tree.c  check_path.c main.c env_list.c
+SRCS =  checker.c checker2.c create_tree.c handle_word.c parser.c heredoc.c parser2.c tokenizer.c lexer.c handler.c exec.c builtin.c  tree.c  check_path.c main.c env_list.c
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
 NAME = minishell
 
 OBJS = $(SRCS:.c=.o)

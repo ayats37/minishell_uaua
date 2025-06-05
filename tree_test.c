@@ -6,8 +6,8 @@ int handle_redirection(t_tree *node)
 	t_token *redir;
 	int fd;
 	
-	if (!node || !node->redir)
-        return (0);
+	if (!node->redir)
+	return 0;  
 	redir = node->redir;
 	while (redir)
 	{
@@ -19,36 +19,27 @@ int handle_redirection(t_tree *node)
 				close(redir->fd);
 			}
 		}
-	    if (redir->type == REDIR_IN)
-        {
+		if (redir->type == REDIR_IN)
+		{
             fd = open(redir->value, O_RDONLY);
             if (fd == -1)
-            {
-                printf("minishell: %s : No such file or directory\n", redir->value);
-                exit (1);
-            }
+                return 1;
             dup2(fd, STDIN_FILENO);
             close(fd);
         }
-        else if (redir->type == REDIR_OUT)
+        if (redir->type == REDIR_OUT)
         {
             fd = open(redir->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd == -1)
-            {
-                printf("minishell: %s : No such file or directory\n", redir->value);
-                exit (1);
-            }
+                return 1;
             dup2(fd, STDOUT_FILENO);
             close(fd);
         }
-        else if (redir->type == APPEND)
+        if (redir->type == APPEND)
         {
             fd = open(redir->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd == -1)
-            {
-                printf("minishell: %s : No such file or directory\n", redir->value);
-                exit (1);
-            }
+                return 1;
             dup2(fd, STDOUT_FILENO);
             close(fd);
         }
@@ -77,38 +68,34 @@ int is_builtin(char *cmd)
         return 1;
     return 0;
 }
-void write_error(char *message)
-{
-    perror(message);
-    exit(1);
-}
 
 int execute_cmd(char **cmds, char **env, t_tree *node)
 {
     pid_t pid;
     int status;
     char *full_path;
-
+    if (!node && !node->redir)
+        handle_redirection(node) == -1;   
     pid = fork();
     if (pid == -1)
-        write_error("fork failed");
+    {
+        perror("fork faild");
+        return 1;
+    }   
     if (pid == 0)
     {
-        if (node->redir)
-            handle_redirection(node); 
         full_path = find_cmd_path(cmds[0], env);
         if (!full_path)
-            write_error("command not found");
+        {
+            printf("%s: command not found\n", cmds[0]);
+            exit(127);
+        } 
         execve(full_path, cmds, env);
-        free(full_path);
-        write_error("execve failed");
+        perror("execve failed");
+        exit(1);
     }
-    else
-    {
-        waitpid(pid, &status, 0);
-        return (WEXITSTATUS(status));
-    }
-    return (0);
+    waitpid(pid, &status, 0);
+    return (WEXITSTATUS(status));
 }
 
 int execute_pipe(t_tree *node, char **env, t_env **envlist)
@@ -163,46 +150,33 @@ int execute_pipe(t_tree *node, char **env, t_env **envlist)
 
 int execute_tree(t_tree *node, char **env, t_env **envlist)
 {
-    
-    int last_status = 0;
-    int status = 0;
+    int left_status;
 
     if (!node)
         return (1);
-
     if (node->type == PIPE)
         return (execute_pipe(node, env, envlist));
-    else if (node->type == CMD || node->type == DOUBLE_QUOTE)
+    if (node->type == CMD)
     {
-        if (is_builtin(node->cmd[0]))
-            return (execute_builtin(node, envlist, last_status));
-        else
-            return (execute_cmd(node->cmd, env, node));
-    }
-    else if (node->type == AND || node->type == OR)
-    {
-        status = execute_tree(node->left, env, envlist);
-        if (node->type == AND && status == 0)
-            return (execute_tree(node->right, env, envlist));
-        if (node->type == OR && status != 0)
-            return (execute_tree(node->right, env, envlist));
-        return (status);
-    }
-    if (node->redir) 
-    {
-        pid_t pid = fork();
-        if (pid == -1)
-        {
-            perror("fork failed");
+        if (!node->cmd || !node->cmd[0])
             return (1);
-        }
-        if (pid == 0)
-        {
-            handle_redirection(node);
-            exit(0);
-        }
-        waitpid(pid, &status, 0);
-        return (WEXITSTATUS(status));
+        if (is_builtin(node->cmd[0]))
+            return (execute_builtin(node, envlist, 0));
+        return (execute_cmd(node->cmd, env, node));
+    }
+    if (node->type == AND)
+    {
+        left_status = execute_tree(node->left, env, envlist);
+        if (left_status == 0)
+            return (execute_tree(node->right, env, envlist));
+        return (left_status);
+    }
+    if (node->type == OR)
+    {
+        left_status = execute_tree(node->left, env, envlist);
+        if (left_status != 0)
+            return (execute_tree(node->right, env, envlist));
+        return (left_status);
     }
     return (1);
 }

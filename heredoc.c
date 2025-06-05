@@ -19,7 +19,6 @@ void handle_heredoc_input(char *delimiter, int write_fd)
         free(line);
     }
 }
-
 void process_heredocs_tree(t_tree *node)
 {
     t_token *redir;
@@ -61,6 +60,7 @@ void process_heredocs_tree(t_tree *node)
                 exit(0);
             }
             close(pipe_fd[1]);
+            close(pipe_fd[0]);
             waitpid(pid, &status, 0);
             redir->fd = pipe_fd[0]; 
         }

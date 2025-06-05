@@ -84,13 +84,21 @@ int main(int argc, char **argv, char **env)
 			token->type = token_type(token);
 			append_token(&token_list, token);
 		}
+        if (!token_list)
+			continue ;
+		if (check_parenthesis(token_list) != 0)
+			continue;
         merge_tokens(&token_list);
+        if (check_errors(token_list) == 1)
+			continue;
         node = parse_op(token_list);
-		// print_tree(node, 0, "NODE");
-        process_heredocs_tree(node); 
+        if(!node)
+			continue;
+        write(1,"1\n", 2);
+        // process_heredocs_tree(node); 
         execute_tree(node, env, &envlist);  
         free(input);
     }
     
-    return 0;
+    return (0);
 }
