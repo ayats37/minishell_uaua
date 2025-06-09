@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ouel-afi <ouel-afi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:11:54 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/13 20:20:48 by ouel-afi         ###   ########.fr       */
+/*   Updated: 2025/06/09 15:35:11 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,12 @@ void	append_token(t_token **head, t_token *token)
 void	merge_tokens(t_token **tokens)
 {
 	t_token	*current;
-	t_token	*tmp;
+	// t_token	*tmp;
 	t_token	*to_delete;
 	char	*merged_value;
 
 	to_delete = NULL;
-	tmp = NULL;
+	// tmp = NULL;
 	current = *tokens;
 	while (current != NULL && current->next != NULL)
 	{
@@ -110,7 +110,7 @@ void	merge_tokens(t_token **tokens)
 		}
 		else
 		{
-			tmp = current;
+			// tmp = current;
 			current = current->next;
 		}
 	}

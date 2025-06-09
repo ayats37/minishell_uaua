@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_tree.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ouel-afi <ouel-afi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:20:13 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/12 20:20:22 by ouel-afi         ###   ########.fr       */
+/*   Updated: 2025/06/09 17:05:59 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ t_tree	*create_tree_node(t_token *token, char **cmd, t_token *redir)
 		node->cmd = cmd;
 	if (redir)
 		node->redir = redir;
+	else if (!redir)
+		node->redir = NULL;
 	node->has_space = token->has_space;
 	node->type = token->type;
 	node->value = token->value;

@@ -94,8 +94,8 @@ int main(int argc, char **argv, char **env)
         node = parse_op(token_list);
         if(!node)
 			continue;
-        write(1,"1\n", 2);
-        // process_heredocs_tree(node); 
+        // write(1,"1\n", 2);
+        process_heredocs_tree(node); 
         execute_tree(node, env, &envlist);  
         free(input);
     }
