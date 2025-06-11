@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/09 16:53:24 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/11 15:04:57 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ void	process_all_heredocs(t_tree *node);
 int execute_pipe(t_tree *node, char **env, t_env **envlist);
 void handle_heredoc_input(char *delimiter, int write_fd);
 void process_heredocs_tree(t_tree *node);
-void cleanup_heredoc_fds(t_tree *node);
-void heredoc_handler(int sig);
+int is_valid_n_flag(char *arg);
 
 #endif
