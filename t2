@@ -1,0 +1,5 @@
+ccc
+ddd
+ggg
+hhh
+echo ab'$HOME' | cat
