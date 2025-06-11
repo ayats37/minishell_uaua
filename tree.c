@@ -94,11 +94,8 @@ int execute_cmd(char **cmds, char **env, t_tree *node)
         write_error("fork failed");
     if (pid == 0)
     {
-				if (node && node->redir)
-				{
-					write(1, "889888888888\n", 14);
-        	        handle_redirection(node);   
-				}
+		if (node && node->redir)
+        	handle_redirection(node);   
         full_path = find_cmd_path(cmds[0], env);
         if (!full_path)
             write_error("command not found");
