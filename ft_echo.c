@@ -37,13 +37,7 @@ int ft_echo(char **cmd, t_env *env_list, int last_status)
             if (cmd[i][j] == '$')
             {
                 offset = handle_variable(&cmd[i][j], env_list, last_status);
-                if (offset == 0)
-                {
-                    printf("%c", cmd[i][j]);
-                    j++;
-                }
-                else
-                    j += offset;  
+                j += offset + 1; 
             }
             else
             {
