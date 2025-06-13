@@ -37,7 +37,7 @@
 
 
 
-SRCS =  checker.c checker2.c create_tree.c handle_word.c parser.c heredoc.c parser2.c tokenizer.c lexer.c handler.c exec.c ft_cd.c tree.c  check_path.c main.c env_list.c ft_echo.c ft_export.c ft_env.c ft_exit.c ft_unset.c ft_pwd.c utils.c env_list2.c #free.c 
+SRCS =  checker.c checker2.c create_tree.c handle_word.c parser.c heredoc.c parser2.c tokenizer.c lexer.c handler.c exec.c ft_cd.c tree.c  check_path.c main.c env_list.c ft_echo.c ft_export.c ft_env.c ft_exit.c ft_unset.c ft_pwd.c utils.c env_list2.c free.c 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
 NAME = minishell

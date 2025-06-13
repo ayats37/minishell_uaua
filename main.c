@@ -20,49 +20,6 @@ void setup_shell_terminal(void)
     }
 }
 
-void free_tokens(t_token *tokens)
-{
-    t_token *current = tokens;
-    t_token *next;
-
-    while (current != NULL)
-    {
-        next = current->next;
-        free(current->value);
-        free(current);
-        current = next;
-    }
-}
-
-
-void free_tree(t_tree *node)
-{
-    if (node == NULL)
-        return;
-    
-    free_tree(node->left);
-    free_tree(node->right);
-    
-    if (node->cmd)
-    {
-        for (int i = 0; node->cmd[i]; i++)
-            free(node->cmd[i]);
-        free(node->cmd);
-    }
-    if (node->redir)
-        free_tokens(node->redir);
-
-    free(node);
-}
-
-void free_lexer(t_lexer *lexer)
-{
-    if (!lexer)
-        return;
-    free(lexer);
-}
-
-
 void	handler(int sig)
 {
 	(void)sig;
@@ -76,18 +33,6 @@ void	handler(int sig)
 // {
 //     system("leaks minishell");
 // }
-void free_resources(char *input, t_lexer *lexer, t_token *token_list, t_tree *node)
-{
-    if (input)
-        free(input);
-    if (lexer)
-        free_lexer(lexer);
-    if (token_list)
-        free_tokens(token_list);
-    if (node)
-        free_tree(node);
-}
-
 
 int main(int argc, char **argv, char **env)
 {
