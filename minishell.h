@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/13 13:56:27 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/13 15:38:14 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,5 +139,7 @@ void free_tree(t_tree *node);
 void free_lexer(t_lexer *lexer);
 void free_resources(char *input, t_lexer *lexer, t_token *token_list, t_tree *node);
 void setup_shell_terminal(void);
-
+void heredoc_sigint_handler(int sig);
+int is_num(const char *str);
+int is_digit(int c);
 #endif

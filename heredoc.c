@@ -6,11 +6,19 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 10:58:04 by taya              #+#    #+#             */
-/*   Updated: 2025/06/13 12:02:34 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/13 16:39:40 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void heredoc_sigint_handler(int sig)
+{
+    (void)sig;
+
+    write(1, "\n", 1);
+    exit(1);
+}
 
 void handle_heredoc_input(char *delimiter, int write_fd)
 {
@@ -67,13 +75,22 @@ void process_heredocs_tree(t_tree *node)
             if (pid == 0)
             {
                 close(pipe_fd[0]);
+                signal(SIGINT, heredoc_sigint_handler);
+                signal(SIGQUIT, SIG_IGN);
                 handle_heredoc_input(redir->value, pipe_fd[1]);
                 close(pipe_fd[1]);
                 exit(0);
             }
             close(pipe_fd[1]);
             waitpid(pid, &status, 0);
-            redir->fd = pipe_fd[0]; 
+
+            if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+            {
+                close(pipe_fd[0]);
+                redir->fd = -1;
+            }
+            else
+                redir->fd = pipe_fd[0];
         }
         redir = redir->next;
     }

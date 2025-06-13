@@ -1,4 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 14:31:55 by taya              #+#    #+#             */
+/*   Updated: 2025/06/13 16:21:48 by taya             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
+
 
 void setup_shell_terminal(void)
 {
@@ -60,7 +73,7 @@ int main(int argc, char **argv, char **env)
         input = readline("minishell> ");
         if (!input)
         {
-            write(1, "exit", 5);
+            write(1, "exit\n", 5);
             break;
         }
         if (input[0] == '\0')
@@ -69,6 +82,7 @@ int main(int argc, char **argv, char **env)
             continue;
         }  
         add_history(input);
+        token_list = NULL;
         lexer = initialize_lexer(input);
 		while (lexer->position < lexer->lenght)
 		{
@@ -91,6 +105,7 @@ int main(int argc, char **argv, char **env)
         node = parse_op(token_list);
         if(!node)
 			continue;
+        // print_tree(node, 0, "NODE");
         process_heredocs_tree(node); 
         execute_tree(node, env, &envlist);  
         free(input);

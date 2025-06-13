@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 10:51:02 by taya              #+#    #+#             */
-/*   Updated: 2025/06/13 10:51:03 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/13 16:30:11 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int handle_redirection(t_tree *node)
         {
             fd = open(redir->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd == -1)
-                write_error(redir->value, "Permission denied");
+                write_error(redir->value, "No such file or directory");
             if (dup2(fd, STDOUT_FILENO) == -1)
                 write_error(NULL, "dup2 failed");
             close(fd);

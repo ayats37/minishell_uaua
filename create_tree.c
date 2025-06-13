@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:20:13 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/13 11:21:17 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/13 16:22:40 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,12 @@ t_tree	*create_tree_node(t_token *token, char **cmd, t_token *redir)
 		node->redir = NULL;
 	node->has_space = token->has_space;
 	node->type = token->type;
-	node->value = token->value;
+	if (token->next && token->next->next && (token->type == 5 || token->type == 6 || token->type == 7 || token->type == 8)){
+		node->value = token->next->next->value;
+		node->type = 1;
+	}
+	else
+		node->value = token->value;
 	node->left = NULL;
 	node->right = NULL;
 	return (node);

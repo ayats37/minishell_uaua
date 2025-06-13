@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ouel-afi <ouel-afi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:37:02 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/05/13 16:18:19 by ouel-afi         ###   ########.fr       */
+/*   Updated: 2025/06/13 16:07:35 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,12 @@ int	fill_args_and_redirs(t_token *tmp, char **cmd_args, t_token **redir)
 	while (tmp)
 	{
 		if (tmp->type == 1 || tmp->type == 3 || tmp->type == 4)
+		{
+			write(1, "2\n", 2);
+			printf("tmp->value : %s\n", tmp->value);
 			cmd_args[i++] = ft_strdup(tmp->value);
+			
+		}
 		else if (tmp->next)
 		{
 			last_type = tmp->type;
