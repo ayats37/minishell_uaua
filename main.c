@@ -42,6 +42,11 @@ void	handler(int sig)
 	rl_redisplay();
 }
 
+// void vv()
+// {
+//     system("leaks minishell");
+// }
+
 int main(int argc, char **argv, char **env)
 {
     char *input;
@@ -52,7 +57,7 @@ int main(int argc, char **argv, char **env)
     t_env *envlist;
 		(void)argc;
 		(void)argv;
-
+    // atexit(vv);
     envlist = init_env(env);
     signal(SIGQUIT, SIG_IGN);
     signal(SIGINT, handler);

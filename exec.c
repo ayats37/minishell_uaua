@@ -1,46 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 10:51:14 by taya              #+#    #+#             */
+/*   Updated: 2025/06/13 11:20:42 by taya             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-
-int  is_alphanumeric(int c)
-{
-    return ((c >= 'A' && c <= 'Z') || 
-            (c >= 'a' && c <= 'z') || 
-            (c >= '0' && c <= '9'));
-}
-int  is_alpha(int c)
-{
-    return ((c >= 'A' && c <= 'Z') || 
-            (c >= 'a' && c <= 'z'));
-}
-
-int handle_variable(char *str, t_env *env_list, int last_exit_status)
-{
-    int var_len;
-    char *var;
-    char *value;
-
-    if (str[1] == '?')
-    {
-        printf("%d", last_exit_status);
-        return (1); 
-    }
-    var_len = 0;
-    while (str[var_len + 1] && (is_alphanumeric(str[var_len + 1]) || str[var_len + 1] == '_'))
-        var_len++;
-    if (var_len > 0)
-    {
-        var = ft_substr(str, 1, var_len);
-        value = get_env_value(var, env_list);
-        if (value)
-            printf("%s", value);
-        free(var);
-        return (var_len);
-    }
-    else
-    {
-        printf("$");
-        return (0);
-    }
-}
 
 int execute_builtin(t_tree *node, t_env **envlist, int last_status)
 {
@@ -72,4 +42,33 @@ int execute_builtin(t_tree *node, t_env **envlist, int last_status)
     }   
     return (result);
 }
+
+int execute_cmd(char **cmds, char **env, t_tree *node) 
+{
+    pid_t pid;
+    int status;
+    char *full_path;
+    
+    pid = fork();
+    if (pid == -1)
+        write_error(cmds[0], "fork failed");
+    if (pid == 0) 
+    {
+        if (node && node->redir)
+            handle_redirection(node); 
+        full_path = find_cmd_path(cmds[0], env);
+        if (!full_path)
+            write_error(cmds[0], "command not found");
+        execve(full_path, cmds, env);
+        free(full_path);
+        write_error(cmds[0], "execve failed");
+    }
+    else 
+    {
+        waitpid(pid, &status, 0);
+        return (WEXITSTATUS(status));
+    }
+    return (0);
+}
+
 

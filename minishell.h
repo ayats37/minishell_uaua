@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/11 16:43:28 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/13 11:34:04 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <readline/history.h>
 #include <string.h>
 #include <errno.h>
+
 
 #define MAX_PIPES 1024
 
@@ -123,7 +124,6 @@ char	*find_cmd_path(char *cmd, char **env);
 char	**ft_split(char const *s, char c);
 int execute_tree(t_tree *node, char **env, t_env **envlist);
 int execute_cmd(char **cmds, char **env, t_tree *node);
-void write_error(char *message);
 int is_builtin(char *cmd);
 int handle_redirection(t_tree *node);
 int  is_alpha(int c);
@@ -133,6 +133,8 @@ int execute_pipe(t_tree *node, char **env, t_env **envlist);
 void handle_heredoc_input(char *delimiter, int write_fd);
 void process_heredocs_tree(t_tree *node);
 int is_valid_n_flag(char *arg);
-
+void write_error(char *command, char *message);
+void sigint_heredoc(int sig);
+void handler(int sig);
 
 #endif

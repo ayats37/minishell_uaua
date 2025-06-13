@@ -1,55 +1,62 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tree.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 10:51:02 by taya              #+#    #+#             */
+/*   Updated: 2025/06/13 10:51:03 by taya             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 
 int handle_redirection(t_tree *node)
 {
-	t_token *redir;
-	int fd;
-	
-	if (!node || !node->redir)
+    t_token *redir;
+    int fd;
+    
+    if (!node || !node->redir)
         return (0);
-	redir = node->redir;
-	while (redir)
-	{
-		if (redir->type == HEREDOC)
-		{
-			if (redir->fd > 0)
-			{
-				dup2(redir->fd, STDIN_FILENO);
-				close(redir->fd);
-			}
-		}
-	    if (redir->type == REDIR_IN)
+    redir = node->redir;
+    while (redir)
+    {
+        if (redir->type == HEREDOC)
+        {
+            if (redir->fd > 0)
+            {
+                if (dup2(redir->fd, STDIN_FILENO) == -1)
+                    write_error(NULL, "dup2 failed");
+                close(redir->fd);
+            }
+        }
+        if (redir->type == REDIR_IN)
         {
             fd = open(redir->value, O_RDONLY);
             if (fd == -1)
-            {
-                printf("minishell: %s : No such file or directory\n", redir->value);
-                exit (1);
-            }
-            dup2(fd, STDIN_FILENO);
+                write_error(redir->value, "No such file or directory");
+            if (dup2(fd, STDIN_FILENO) == -1)
+                write_error(NULL, "dup2 failed");
             close(fd);
         }
         else if (redir->type == REDIR_OUT)
         {
             fd = open(redir->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd == -1)
-            {
-                printf("minishell: %s : No such file or directory\n", redir->value);
-                exit (1);
-            }
-            dup2(fd, STDOUT_FILENO);
+                write_error(redir->value, "Permission denied");
+            if (dup2(fd, STDOUT_FILENO) == -1)
+                write_error(NULL, "dup2 failed");
             close(fd);
         }
         else if (redir->type == APPEND)
         {
             fd = open(redir->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
             if (fd == -1)
-            {
-                printf("minishell: %s : No such file or directory\n", redir->value);
-                exit (1);
-            }
-            dup2(fd, STDOUT_FILENO);
+                write_error(redir->value, "Permission denied");
+            if (dup2(fd, STDOUT_FILENO) == -1)
+                write_error(NULL, "dup2 failed");
             close(fd);
         }
         redir = redir->next;
@@ -57,59 +64,7 @@ int handle_redirection(t_tree *node)
     return 0;
 }
 
-int is_builtin(char *cmd)
-{
-    if (!cmd)
-        return 0;
-    if (strcmp(cmd, "cd") == 0)
-        return 1;
-    if (strcmp(cmd, "echo") == 0)
-        return 1;
-    if (strcmp(cmd, "exit") == 0)
-        return 1;
-    if (strcmp(cmd, "env") == 0)
-        return 1;
-    if (strcmp(cmd, "export") == 0)
-        return 1;
-    if (strcmp(cmd, "unset") == 0)
-        return 1;
-    if (strcmp(cmd, "pwd") == 0)
-        return 1;
-    return 0;
-}
-void write_error(char *message)
-{
-    perror(message);
-    exit(1);
-}
 
-int execute_cmd(char **cmds, char **env, t_tree *node)
-{
-    pid_t pid;
-    int status;
-    char *full_path;
-
-    pid = fork();
-    if (pid == -1)
-        write_error("fork failed");
-    if (pid == 0)
-    {
-		if (node && node->redir)
-        	handle_redirection(node);   
-        full_path = find_cmd_path(cmds[0], env);
-        if (!full_path)
-            write_error("command not found");
-        execve(full_path, cmds, env);
-        free(full_path);
-        write_error("execve failed");
-    }
-    else
-    {
-        waitpid(pid, &status, 0);
-        return (WEXITSTATUS(status));
-    }
-    return (0);
-}
 
 int execute_pipe(t_tree *node, char **env, t_env **envlist)
 {

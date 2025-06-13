@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 20:11:54 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/09 15:35:11 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/13 11:14:40 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ t_token	*create_token(char *value, char quote, int has_space)
 	else
 		token->type = 0;
 	token->has_space = has_space;
+	token->fd = -1;
 	return (token);
 }
 
