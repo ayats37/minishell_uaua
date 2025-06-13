@@ -14,6 +14,7 @@ void free_tokens(t_token *tokens)
     }
 }
 
+
 void free_tree(t_tree *node)
 {
     if (node == NULL)
@@ -28,10 +29,19 @@ void free_tree(t_tree *node)
             free(node->cmd[i]);
         free(node->cmd);
     }
-    
-    free(node->value);
+    if (node->redir)
+        free_tokens(node->redir);
+
     free(node);
 }
+
+void free_lexer(t_lexer *lexer)
+{
+    if (!lexer)
+        return;
+    free(lexer);
+}
+
 
 void	handler(int sig)
 {
@@ -46,6 +56,18 @@ void	handler(int sig)
 // {
 //     system("leaks minishell");
 // }
+void free_resources(char *input, t_lexer *lexer, t_token *token_list, t_tree *node)
+{
+    if (input)
+        free(input);
+    if (lexer)
+        free_lexer(lexer);
+    if (token_list)
+        free_tokens(token_list);
+    if (node)
+        free_tree(node);
+}
+
 
 int main(int argc, char **argv, char **env)
 {
@@ -55,8 +77,12 @@ int main(int argc, char **argv, char **env)
     t_token *token_list;
     t_tree *node;
     t_env *envlist;
-		(void)argc;
-		(void)argv;
+	(void)argc;
+	(void)argv;
+    input = NULL;
+    lexer = NULL;
+    node = NULL;
+    token_list = NULL;
     // atexit(vv);
     envlist = init_env(env);
     signal(SIGQUIT, SIG_IGN);
@@ -69,7 +95,7 @@ int main(int argc, char **argv, char **env)
         if (!input)
         {
             write(1, "exit\n", 5);
-            exit(0);
+            break;
         }
         
         if (input[0] == '\0')
@@ -90,7 +116,10 @@ int main(int argc, char **argv, char **env)
 			append_token(&token_list, token);
 		}
         if (!token_list)
+        {
+            free(input);
 			continue ;
+        }
 		if (check_parenthesis(token_list) != 0)
 			continue;
         merge_tokens(&token_list);
@@ -99,11 +128,10 @@ int main(int argc, char **argv, char **env)
         node = parse_op(token_list);
         if(!node)
 			continue;
-        // write(1,"1\n", 2);
         process_heredocs_tree(node); 
         execute_tree(node, env, &envlist);  
         free(input);
     }
-    
+    free_resources(input, lexer, token_list, node);
     return (0);
 }
