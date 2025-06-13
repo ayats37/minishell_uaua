@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/13 11:34:04 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/13 13:56:27 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ typedef struct s_env
 	char **env;
 }	t_env;
 
-
+//**************************************parsing********************************************
 t_lexer	*initialize_lexer(char *input);
 t_token	*get_next_token(t_lexer *lexer);
 t_token	*handle_quote(t_lexer *lexer, char quote);
@@ -102,7 +102,6 @@ void	print_linked_list(t_token *token_list);
 void	print_tree(t_tree *node, int depth, const char *side);
 int		is_space(t_lexer *lexer);
 int		check_before_open_paren(t_token *token);
-void ll();
 //***************************************exec**********************************************
 void update_env(char *name, char *value, t_env **env_list);
 char *get_env_value(char *name, t_env *env_list);
@@ -134,7 +133,11 @@ void handle_heredoc_input(char *delimiter, int write_fd);
 void process_heredocs_tree(t_tree *node);
 int is_valid_n_flag(char *arg);
 void write_error(char *command, char *message);
-void sigint_heredoc(int sig);
 void handler(int sig);
+void free_tokens(t_token *tokens);
+void free_tree(t_tree *node);
+void free_lexer(t_lexer *lexer);
+void free_resources(char *input, t_lexer *lexer, t_token *token_list, t_tree *node);
+void setup_shell_terminal(void);
 
 #endif

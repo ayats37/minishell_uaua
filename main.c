@@ -1,5 +1,25 @@
 #include "minishell.h"
 
+void setup_shell_terminal(void)
+{
+    pid_t shell_pgid;
+
+    signal(SIGTTIN, SIG_IGN);
+    signal(SIGTTOU, SIG_IGN);
+    signal(SIGTSTP, SIG_IGN);
+    shell_pgid = getpid();
+    if (setpgid(shell_pgid, shell_pgid) < 0)
+    {
+        perror("Couldn't put the shell in its own process group");
+        exit(1);
+    }
+    if (tcsetpgrp(STDIN_FILENO, shell_pgid) < 0)
+    {
+        perror("Couldn't set terminal control");
+        exit(1);
+    }
+}
+
 void free_tokens(t_token *tokens)
 {
     t_token *current = tokens;
@@ -85,6 +105,7 @@ int main(int argc, char **argv, char **env)
     token_list = NULL;
     // atexit(vv);
     envlist = init_env(env);
+    setup_shell_terminal();
     signal(SIGQUIT, SIG_IGN);
     signal(SIGINT, handler);
     rl_catch_signals = 0;
@@ -94,19 +115,16 @@ int main(int argc, char **argv, char **env)
         input = readline("minishell> ");
         if (!input)
         {
-            write(1, "exit\n", 5);
+            write(1, "exit", 5);
             break;
         }
-        
         if (input[0] == '\0')
         {
             free(input);
             continue;
-        }
-        
+        }  
         add_history(input);
         lexer = initialize_lexer(input);
-        token_list = NULL;
 		while (lexer->position < lexer->lenght)
 		{
 			token = get_next_token(lexer);
