@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 14:31:55 by taya              #+#    #+#             */
-/*   Updated: 2025/06/13 16:21:48 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/14 16:05:21 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int main(int argc, char **argv, char **env)
     t_token *token_list;
     t_tree *node;
     t_env *envlist;
+		int last_exit_status = 0;
 	(void)argc;
 	(void)argv;
     input = NULL;
@@ -107,7 +108,7 @@ int main(int argc, char **argv, char **env)
 			continue;
         // print_tree(node, 0, "NODE");
         process_heredocs_tree(node); 
-        execute_tree(node, env, &envlist);  
+        last_exit_status = execute_tree(node, env, &envlist, last_exit_status);  
         free(input);
     }
     free_resources(input, lexer, token_list, node);

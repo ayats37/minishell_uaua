@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 10:51:02 by taya              #+#    #+#             */
-/*   Updated: 2025/06/13 16:30:11 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/14 16:14:07 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int handle_redirection(t_tree *node)
 
 
 
-int execute_pipe(t_tree *node, char **env, t_env **envlist)
+int execute_pipe(t_tree *node, char **env, t_env **envlist, int last_status)
 {
     pid_t pid1, pid2;
     int status1, status2;
@@ -90,7 +90,7 @@ int execute_pipe(t_tree *node, char **env, t_env **envlist)
         close(pipe_fd[0]);
         dup2(pipe_fd[1], STDOUT_FILENO);
         close(pipe_fd[1]);
-        exit(execute_tree(node->left, env, envlist));
+        exit(execute_tree(node->left, env, envlist, last_status));
     }
     pid2 = fork();
     if (pid2 == -1)
@@ -106,7 +106,7 @@ int execute_pipe(t_tree *node, char **env, t_env **envlist)
         close(pipe_fd[1]);
         dup2(pipe_fd[0], STDIN_FILENO);
         close(pipe_fd[0]);
-        exit(execute_tree(node->right, env, envlist));
+        exit(execute_tree(node->right, env, envlist, last_status));
 		}
     close(pipe_fd[0]);
     close(pipe_fd[1]);
@@ -115,18 +115,18 @@ int execute_pipe(t_tree *node, char **env, t_env **envlist)
     return (WEXITSTATUS(status2));
 }
 
-int execute_tree(t_tree *node, char **env, t_env **envlist)
+int execute_tree(t_tree *node, char **env, t_env **envlist, int last_status)
 {
     
-    int last_status = 0;
     int status = 0;
 
     if (!node)
         return (1);
     if (node->type == PIPE)
-        return (execute_pipe(node, env, envlist));
+        return (execute_pipe(node, env, envlist, last_status));
     else if (node->type == CMD || node->type == DOUBLE_QUOTE)
     {
+				expand_variables(node->cmd, last_status, *envlist);
         if (is_builtin(node->cmd[0]))
             return (execute_builtin(node, envlist, last_status));
         else
@@ -134,11 +134,11 @@ int execute_tree(t_tree *node, char **env, t_env **envlist)
     }
     else if (node->type == AND || node->type == OR)
     {
-        status = execute_tree(node->left, env, envlist);
+        status = execute_tree(node->left, env, envlist, last_status);
         if (node->type == AND && status == 0)
-            return (execute_tree(node->right, env, envlist));
+            return (execute_tree(node->right, env, envlist, last_status));
         if (node->type == OR && status != 0)
-            return (execute_tree(node->right, env, envlist));
+            return (execute_tree(node->right, env, envlist, last_status));
         return (status);
     }
     if (node->redir) 
