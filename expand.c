@@ -12,6 +12,8 @@ char *str_join_free(char *s1, const char *s2)
     return res;
 }
 
+
+
 char *expand_token(char *token, t_env *env_list, int last_exit_status)
 {
     char *result = strdup("");
@@ -20,6 +22,8 @@ char *expand_token(char *token, t_env *env_list, int last_exit_status)
 		char *status_str;
 		char *var_name;
 		char *val;
+		char *tmp;
+
     while (token[i])
     {
         if (token[i] == '$')
@@ -49,9 +53,12 @@ char *expand_token(char *token, t_env *env_list, int last_exit_status)
         }
         else
         {
-            char buf[2] = {token[i], 0};
-            result = str_join_free(result, buf);
-            i++;
+					tmp = char_to_str(token[i]);
+					if (!tmp)
+							return (NULL);
+					result = str_join_free(result, tmp);
+					free(tmp);
+          i++;
         }
     }
     return result;

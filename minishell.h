@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 12:58:09 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/06/14 16:13:22 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/14 16:46:58 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ int ft_exit(char **cmd, t_env *env_list);
 int ft_env(t_env **env_list);
 int ft_export(char **cmd, t_env **env_list);
 int execute_builtin(t_tree *node, t_env **envlis, int last_status);
-int handle_variable(char *str, t_env *env_list, int last_exit_status);
 int  is_alphanumeric(int c);
 char	*find_cmd_path(char *cmd, char **env);
 char	**ft_split(char const *s, char c);
@@ -145,4 +144,6 @@ int is_digit(int c);
 char *expand_token(char *token, t_env *env_list, int last_exit_status);
 char *str_join_free(char *s1, const char *s2);
 void expand_variables(char **tokens, int last_exit_status, t_env *env_list);
+char *char_to_str(char c);
+
 #endif

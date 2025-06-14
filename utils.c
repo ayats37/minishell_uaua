@@ -6,7 +6,7 @@
 /*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 10:33:37 by taya              #+#    #+#             */
-/*   Updated: 2025/06/13 15:38:05 by taya             ###   ########.fr       */
+/*   Updated: 2025/06/14 16:47:29 by taya             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,32 +50,16 @@ int is_num(const char *str)
     return 1;
 }
 
-int handle_variable(char *str, t_env *env_list, int last_exit_status)
+char *char_to_str(char c)
 {
-    int var_len;
-    char *var;
-    char *value;
-
-    if (str[1] == '?')
-    {
-        printf("%d", last_exit_status);
-        return (1); 
-    }
-    var_len = 0;
-    while (str[var_len + 1] && (is_alphanumeric(str[var_len + 1]) || str[var_len + 1] == '_'))
-        var_len++;
-    if (var_len > 0)
-    {
-        var = ft_substr(str, 1, var_len);
-        value = get_env_value(var, env_list);
-        if (value)
-            printf("%s", value);
-        free(var);
-        return (var_len);
-    }
-    else
-        return (printf("$"), 0);
+    char *s = malloc(2);
+    if (!s)
+        return NULL;
+    s[0] = c;
+    s[1] = '\0';
+    return (s);
 }
+
 int is_builtin(char *cmd)
 {
     if (!cmd)
